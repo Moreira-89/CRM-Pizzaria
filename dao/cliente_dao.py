@@ -15,5 +15,5 @@ class ClienteDAO:
     
     def buscarTodos(self) -> list[Cliente]:
         snapshot = self.ref.get()
-        return [Cliente(id=key, **value) for key, value i n snapshot.items()] if snapshot else []
+        return [Cliente(id=key, **value) for key, value in snapshot.items()] if snapshot else []
     
