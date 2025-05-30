@@ -24,7 +24,7 @@ class FirebaseConfig:
             cred_dict = {
                 "type": "service_account",
                 "project_id": st.secrets["FIREBASE"]["PROJECT_ID"],
-                "private_key": st.secrets["FIREBASE"]["DATABASE_SECRET"].replace('\\n', '\n'),
+                "private_key": st.secrets["FIREBASE"]["DATABASE_SECRET"],
                 "client_email": st.secrets["FIREBASE"]["CLIENT_EMAIL"],
                 "token_uri": "https://oauth2.googleapis.com/token"
             }
