@@ -18,6 +18,14 @@ class ClienteDAO(FirebaseDAO):
         if data:
             return Cliente.from_dict(data)
         return None
+    
+    def buscar_por_nome(self, nome):
+        data = self.db.get()
+        if data and data.val():
+            for item in data.val().values():
+                if item.get("nome", "").lower() == nome.lower():
+                    return item  # Retorna o dicionário do cliente
+        return None
 
     def listar_todos(self):
         data = self.db.child(self.collection).get()
