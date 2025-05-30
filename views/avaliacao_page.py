@@ -119,3 +119,79 @@ def avaliacao_page():
                 st.success("Avaliação deletada com sucesso!")
             else:
                 st.error("Avaliação não encontrada.")
+                
+    elif escolha == "Dashboard":
+        st.subheader("Dashboard de Feedbacks")
+
+        avaliacoes = avaliacao_dao.listar_todos()
+
+        if not avaliacoes:
+            st.warning("Nenhuma avaliação cadastrada.")
+            st.stop()
+
+    # 🎯 Filtros
+    avaliadores = list(set([a.avaliador for a in avaliacoes]))
+    avaliados = list(set([a.avaliado for a in avaliacoes]))
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        filtro_avaliador = st.multiselect(
+            "Filtrar por Avaliador (quem avaliou)",
+            options=avaliadores,
+            default=avaliadores
+        )
+
+    with col2:
+        filtro_avaliado = st.multiselect(
+            "Filtrar por Avaliado (quem foi avaliado)",
+            options=avaliados,
+            default=avaliados
+        )
+
+    # 🔍 Aplicando filtros
+    filtradas = [
+        a for a in avaliacoes
+        if a.avaliador in filtro_avaliador and a.avaliado in filtro_avaliado
+    ]
+
+    if not filtradas:
+        st.info("Nenhuma avaliação encontrada com os filtros selecionados.")
+        st.stop()
+
+    # 📊 Métricas principais
+    notas = [a.nota for a in filtradas]
+    media = sum(notas) / len(notas)
+
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.metric("Média das Notas", f"{media:.2f}")
+
+    with col2:
+        st.metric("Quantidade de Avaliações", len(notas))
+
+    # 📊 Distribuição das notas
+    st.subheader("Distribuição das Notas")
+    dist = {str(nota): notas.count(nota) for nota in range(1, 6)}
+    st.bar_chart(dist)
+
+    # 📅 Avaliações ao longo do tempo
+    st.subheader("Avaliações ao Longo do Tempo")
+
+    df_tempo = {}
+    for a in filtradas:
+        data = a.data_hora.split(" ")[0]  # pega a data sem hora
+        df_tempo[data] = df_tempo.get(data, 0) + 1
+
+    st.line_chart(df_tempo)
+
+    # 📜 Lista detalhada das avaliações
+    with st.expander("📄 Ver detalhes das avaliações"):
+        for a in filtradas:
+            st.markdown(f"**Avaliador:** {a.avaliador}")
+            st.markdown(f"**Avaliado:** {a.avaliado}")
+            st.markdown(f"**Nota:** {a.nota}")
+            st.markdown(f"**Comentário:** {a.comentario}")
+            st.markdown(f"**Data/Hora:** {a.data_hora}")
+            st.markdown("---")
