@@ -1,9 +1,9 @@
 class Cliente:
-    def __init__(self, id:str, nome: str, cpf: str, email: str, telefone: str,
+    def __init__(self, id:str, nome: str, cpf_cnpj: str, email: str, telefone: str,
                  endereco: dict, geolocalizacao: dict, preferencias: dict, opt_in: dict):
         self.id = id
         self.nome = nome
-        self.cpf = cpf
+        self.cpf_cnpj = cpf_cnpj
         self.email = email
         self.telefone = telefone
         self.endereco = endereco
@@ -15,7 +15,7 @@ class Cliente:
     def to_dict(self):
         return {
             "nome": self.nome,
-            "cpf": self.cpf,
+            "cpf_cnpj": self.cpf_cnpj,
             "email": self.email,
             "telefone": self.telefone,
             "endereco": self.endereco,

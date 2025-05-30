@@ -14,13 +14,13 @@ class ClienteDAO(FirebaseDAO):
         return cliente.id
 
     def buscar_por_id(self, id):
-        data = self.db.child(self.collection).child(id).get().val()
+        data = self.db.child(self.collection).child(id).get()
         if data:
             return Cliente.from_dict(data)
         return None
 
     def listar_todos(self):
-        data = self.db.child(self.collection).get().val()
+        data = self.db.child(self.collection).get()
         if data:
             return [Cliente.from_dict(item) for item in data.values()]
         return []
