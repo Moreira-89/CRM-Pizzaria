@@ -19,7 +19,6 @@ def cliente_page():
         email = st.text_input("E-mail")
         telefone = st.text_input("Telefone")
         endereco = st.text_input("Endereço Completo")
-        geolocalizacao = st.text_input("Geolocalização (Ex.: lat,long)")
 
         sms = st.checkbox("Opt-in SMS")
         email_opt = st.checkbox("Opt-in E-mail")
@@ -35,7 +34,6 @@ def cliente_page():
                 email=email,
                 telefone=telefone,
                 endereco=endereco,
-                geolocalizacao=geolocalizacao,
                 preferencias=[p.strip() for p in preferencias.split(",")] if preferencias else [],
                 opt_in={"sms": sms, "email": email_opt, "whatsapp": whatsapp}
             )

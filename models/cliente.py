@@ -1,13 +1,12 @@
 class Cliente:
     def __init__(self, id:str, nome: str, cpf_cnpj: str, email: str, telefone: str,
-                 endereco: dict, geolocalizacao: dict, preferencias: dict, opt_in: dict):
+                 endereco: dict, preferencias: dict, opt_in: dict):
         self.id = id
         self.nome = nome
         self.cpf_cnpj = cpf_cnpj
         self.email = email
         self.telefone = telefone
         self.endereco = endereco
-        self.geolocalizacao = geolocalizacao
         self.preferencias = preferencias
         self.opt_in = opt_in
 
@@ -19,7 +18,6 @@ class Cliente:
             "email": self.email,
             "telefone": self.telefone,
             "endereco": self.endereco,
-            "geolocalizacao": self.geolocalizacao,
             "preferencias": self.preferencias,
             "opt_in": self.opt_in
         }
@@ -33,8 +31,6 @@ class Cliente:
             email=data.get("email"),
             telefone=data.get("telefone"),
             endereco=data.get("endereco"),
-            geolocalizacao=data.get("geolocalizacao"),
             preferencias=data.get("preferencias"),
             opt_in=data.get("opt_in"),
-            historico_pedidos=data.get("historico_pedidos")
         )

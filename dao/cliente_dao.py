@@ -24,7 +24,7 @@ class ClienteDAO(FirebaseDAO):
         if data and data.val():
             for item in data.val().values():
                 if item.get("nome", "").lower() == nome.lower():
-                    return item  # Retorna o dicionário do cliente
+                    return item  
         return None
 
     def listar_todos(self):
