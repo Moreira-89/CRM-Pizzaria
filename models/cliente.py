@@ -11,6 +11,7 @@ class Cliente:
         self.preferencias = preferencias
         self.opt_in = opt_in
 
+    #Transformando o objeto Cliente em um dicionario para armazenar dados no Firebase
     def to_dict(self):
         return {
             "nome": self.nome,
@@ -22,3 +23,18 @@ class Cliente:
             "preferencias": self.preferencias,
             "opt_in": self.opt_in
         }
+    #Metodo estatico que cria obj Cliente a partir de um dicionario (fonte do Firebase)
+    @staticmethod
+    def from_dict(data):
+        return Cliente(
+            id=data.get("id"),
+            nome=data.get("nome"),
+            cpf_cnpj=data.get("cpf_cnpj"),
+            email=data.get("email"),
+            telefone=data.get("telefone"),
+            endereco=data.get("endereco"),
+            geolocalizacao=data.get("geolocalizacao"),
+            preferencias=data.get("preferencias"),
+            opt_in=data.get("opt_in"),
+            historico_pedidos=data.get("historico_pedidos")
+        )
