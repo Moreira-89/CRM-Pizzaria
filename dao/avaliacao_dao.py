@@ -15,14 +15,14 @@ class AvaliacaoDAO(FirebaseDAO):
 
     def buscar_por_id(self, id):
         data = self.db.child(id).get()
-        if data and data.val():
-            return Avaliacao.from_dict(data.val())
+        if data and data:
+            return Avaliacao.from_dict(data)
         return None
 
     def listar_todos(self):
         data = self.db.get()
-        if data and data.val():
-            return [Avaliacao.from_dict(item) for item in data.val().values()]
+        if data and data:
+            return [Avaliacao.from_dict(item) for item in data.values()]
         return []
 
     def atualizar(self, avaliacao: Avaliacao):
