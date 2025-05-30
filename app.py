@@ -14,7 +14,7 @@ st.set_page_config(
 )
 
 #Barra lateral
-st.sidebar.image("https://img.freepik.com/free-vector/pizza-logo-design_23-2149423871.jpg", width=150)
+st.sidebar.image("https://br.vexels.com/png-svg/previsualizar/190242/pizza-plana-kawaii.png", width=150)
 st.sidebar.title("CRM Pizzaria Delivery")
 
 menu = ["Clientes", "Motoboys", "Avaliações"]
