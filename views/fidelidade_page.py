@@ -18,7 +18,7 @@ def fidelidade_page():
         st.subheader("Cadastrar Fidelidade para Cliente")
 
         nome_cliente = st.text_input("Nome do Cliente")
-        pontos = st.number_input("Pontos Iniciais", min_value=0, step=1)
+        pontos = st.number_input("Pontos", min_value=0, step=1)
         nivel = st.selectbox("Nível", ["bronze", "prata", "ouro"])
         validade = st.date_input("Validade dos Pontos").strftime("%Y-%m-%d")
 
