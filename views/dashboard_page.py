@@ -10,14 +10,14 @@ from datetime import datetime
 def dashboard_page():
     st.title("📊 Dashboard Geral da Operação")
 
-    # Instanciar DAOs
+    #Instanciar DAOs
     cliente_dao = ClienteDAO()
     motoboy_dao = MotoboyDAO()
     avaliacao_dao = AvaliacaoDAO()
     fidelidade_dao = FidelidadeDAO()
     campanha_dao = CampanhaDAO()
 
-    # 🔄 Carregar dados
+    #Carregar dados
     clientes = cliente_dao.listar_todos()
     motoboys = motoboy_dao.listar_todos()
     avaliacoes = avaliacao_dao.listar_todos()
@@ -47,7 +47,7 @@ def dashboard_page():
 
     st.divider()
 
-    # ⭐ Avaliações
+    #Avaliações
     st.subheader("⭐ Avaliações — Média Geral")
 
     if avaliacoes:
@@ -62,7 +62,7 @@ def dashboard_page():
 
     st.divider()
 
-    # 🎯 Fidelidade
+    #Fidelidade
     st.subheader("🏆 Fidelidade — Distribuição por Nível")
     niveis = {"bronze": 0, "prata": 0, "ouro": 0}
 
@@ -74,7 +74,7 @@ def dashboard_page():
 
     st.divider()
 
-    # 📈 Campanhas
+    #Campanhas
     st.subheader("📣 Desempenho das Campanhas")
 
     if campanhas:
@@ -96,7 +96,7 @@ def dashboard_page():
 
     st.divider()
 
-    # 🗺️ Atividade dos Motoboys
+    #Atividade dos Motoboys
     st.subheader("🏍️ Status dos Motoboys")
     status = {"Online": 0, "Offline": 0}
 
@@ -110,7 +110,7 @@ def dashboard_page():
 
     st.divider()
 
-    # 📜 Detalhes finais
+    #Detalhes finais
     with st.expander("📄 Ver Detalhes de Campanhas"):
         for c in campanhas:
             st.markdown(f"**Nome:** {c.nome}")
