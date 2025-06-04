@@ -9,7 +9,7 @@ def motoboy_page():
     motoboy_dao = MotoboyDAO()
 
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]
-    escolha = st.sidebar.selectbox("Menu Motoboy", menu)
+    escolha = st.sidebar.selectbox("Ações", menu)
 
     if escolha == "Cadastrar":
         st.subheader("Cadastrar Novo Motoboy")
