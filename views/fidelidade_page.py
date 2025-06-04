@@ -12,7 +12,7 @@ def fidelidade_page():
     cliente_dao = ClienteDAO()
 
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]
-    escolha = st.sidebar.selectbox("Menu Fidelidade", menu)
+    escolha = st.sidebar.selectbox("Ações", menu)
 
     if escolha == "Cadastrar":
         st.subheader("Cadastrar Fidelidade para Cliente")

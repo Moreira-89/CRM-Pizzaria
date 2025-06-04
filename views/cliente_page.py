@@ -9,7 +9,7 @@ def cliente_page():
     cliente_dao = ClienteDAO()
 
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]
-    escolha = st.sidebar.selectbox("Menu", menu)
+    escolha = st.sidebar.selectbox("Ações", menu)
 
     if escolha == "Cadastrar":
         st.subheader("Cadastrar Novo Cliente")

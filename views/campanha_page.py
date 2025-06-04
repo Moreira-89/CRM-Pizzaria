@@ -10,7 +10,7 @@ def campanha_page():
     campanha_dao = CampanhaDAO()
 
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]
-    escolha = st.sidebar.selectbox("Menu Campanha", menu)
+    escolha = st.sidebar.selectbox("Ações", menu)
 
     if escolha == "Cadastrar":
         st.subheader("Cadastrar Nova Campanha")

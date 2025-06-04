@@ -10,7 +10,7 @@ def avaliacao_page():
     avaliacao_dao = AvaliacaoDAO()
 
     menu = ["Cadastrar", "Listar", "Dashboard", "Atualizar", "Deletar"]
-    escolha = st.sidebar.selectbox("Menu Avaliação", menu)
+    escolha = st.sidebar.selectbox("Ações", menu)
 
     if escolha == "Cadastrar":
         st.subheader("Cadastrar Nova Avaliação")

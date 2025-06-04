@@ -31,4 +31,4 @@ elif escolha == "Campanhas":
     campanha_page()
 
 st.sidebar.markdown("---")
-st.sidebar.markdown("Desenvolvido por Amanda Taveira Amorim")
+st.sidebar.markdown("Desenvolvido por: Amanda Taveira Amorim")
