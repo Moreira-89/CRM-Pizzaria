@@ -1,7 +1,7 @@
 import streamlit as st
 
 # Importação das views
-from views.login import login_page
+from views.login import login_view
 from views.cliente_page import cliente_page
 from views.motoboy_page import motoboy_page
 from views.avaliacao_page import avaliacao_page
@@ -17,7 +17,7 @@ if "logado" not in st.session_state:
 
 # Login
 if not st.session_state["logado"]:
-    login_page()
+    login_view()
 
 else:
     # Dados do usuário logado
@@ -72,8 +72,8 @@ elif escolha == "Fidelidade":
 elif escolha == "Campanhas":
     campanha_page()
 
-elif escolha == "Cadastro de Usuário":
-    cadastro_usuario_page()
+#elif escolha == "Cadastro de Usuário":
+#    cadastro_usuario_page()
 
 elif escolha == "Sair":
     st.session_state["logado"] = False
