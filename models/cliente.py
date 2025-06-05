@@ -4,25 +4,24 @@ class Cliente(Usuario):
     def __init__(self, id:str, nome: str, cpf: str, email: str, telefone: str,
                  endereco: dict, preferencias: dict, opt_in: dict):
       
-        super().__init__(id, nome, cpf, telefone)
-        self.cpf = cpf  
+        super().__init__(id, nome, cpf, telefone)  
         self.email = email
-        self.telefone = telefone
         self.endereco = endereco
         self.preferencias = preferencias
         self.opt_in = opt_in
 
     #Transformando o objeto Cliente em um dicionario para armazenar dados no Firebase
     def to_dict(self):
-        return {
-            "nome": self.nome,
-            "cpf": self.cpf,
-            "email": self.email,
-            "telefone": self.telefone,
-            "endereco": self.endereco,
-            "preferencias": self.preferencias,
-            "opt_in": self.opt_in
-        }
+        base = super().to_dict()
+        base.update({
+                "email": self.email,
+                "telefone": self.telefone,
+                "endereco": self.endereco,
+                "preferencias": self.preferencias,
+                "opt_in": self.opt_in
+            })
+        return base
+    
     #Metodo estatico que cria obj Cliente a partir de um dicionario (fonte do Firebase)
     @staticmethod
     def from_dict(data):
