@@ -10,10 +10,6 @@ from views.campanha_page import campanha_page
 
 if "logado" not in st.session_state:
     st.session_state["logado"] = False
-
-
-if not st.session_state["logado"]:
-    login_page()
 else:
     nome = st.session_state["usuario_nome"]
     perfil = st.session_state["usuario_perfil"]
@@ -21,6 +17,8 @@ else:
 #Barra lateral
 st.sidebar.image("https://images.vexels.com/media/users/3/190242/isolated/preview/a865ab8bd0229080d9df607876ebbf16-pizza-plana-kawaii.png", width=150)
 st.sidebar.title("CRM Pizzaria Delivery")
+
+perfil = st.session_state["Usuario"]
 
 if perfil == "Funcionário":
    menu = ["Clientes", "Motoboys", "Avaliações", "Fidelidades", "Campanhas"]
