@@ -1,9 +1,11 @@
-class Cliente:
-    def __init__(self, id:str, nome: str, cpf_cnpj: str, email: str, telefone: str,
+from models.usuario import Usuario
+
+class Cliente(Usuario):
+    def __init__(self, id:str, nome: str, cpf: str, email: str, telefone: str,
                  endereco: dict, preferencias: dict, opt_in: dict):
-        self.id = id
-        self.nome = nome
-        self.cpf_cnpj = cpf_cnpj
+      
+        super().__init__(id, nome, cpf, telefone)
+        self.cpf = cpf  
         self.email = email
         self.telefone = telefone
         self.endereco = endereco
@@ -14,7 +16,7 @@ class Cliente:
     def to_dict(self):
         return {
             "nome": self.nome,
-            "cpf_cnpj": self.cpf_cnpj,
+            "cpf": self.cpf,
             "email": self.email,
             "telefone": self.telefone,
             "endereco": self.endereco,
@@ -27,7 +29,7 @@ class Cliente:
         return Cliente(
             id=data.get("id"),
             nome=data.get("nome"),
-            cpf_cnpj=data.get("cpf_cnpj"),
+            cpf=data.get("cpf"),
             email=data.get("email"),
             telefone=data.get("telefone"),
             endereco=data.get("endereco"),

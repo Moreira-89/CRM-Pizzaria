@@ -15,7 +15,7 @@ def cliente_page():
         st.subheader("Cadastrar Novo Cliente")
 
         nome = st.text_input("Nome Completo")
-        cpf_cnpj = st.text_input("CPF/CNPJ")
+        cpf = st.text_input("CPF/CNPJ")
         email = st.text_input("E-mail")
         telefone = st.text_input("Telefone")
         endereco = st.text_input("Endereço Completo")
@@ -30,7 +30,7 @@ def cliente_page():
             cliente = Cliente(
                 id=None,
                 nome=nome,
-                cpf_cnpj=cpf_cnpj,
+                cpf=cpf,
                 email=email,
                 telefone=telefone,
                 endereco=endereco,
@@ -47,7 +47,7 @@ def cliente_page():
         for cliente in clientes:
             st.markdown(f"**ID:** {cliente.id}")
             st.markdown(f"**Nome:** {cliente.nome}")
-            st.markdown(f"**CPF/CNPJ:** {cliente.cpf_cnpj}")
+            st.markdown(f"**CPF/CNPJ:** {cliente.cpf}")
             st.markdown(f"**E-mail:** {cliente.email}")
             st.markdown(f"**Telefone:** {cliente.telefone}")
             st.markdown(f"**Endereço:** {cliente.endereco}")
