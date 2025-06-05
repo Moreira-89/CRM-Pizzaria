@@ -20,10 +20,9 @@ if not st.session_state["logado"]:
     login_page()
 
 else:
-
     # Dados do usuário logado
-nome = st.session_state["usuario_nome"]
-perfil = st.session_state["usuario_perfil"]
+    nome = st.session_state["usuario_nome"]
+    perfil = st.session_state["usuario_perfil"]
 
 # Sidebar com boas-vindas
 st.sidebar.image(
