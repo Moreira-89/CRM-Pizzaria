@@ -1,18 +1,23 @@
 import streamlit as st
 
 def login_view():
-    st.title("Login Page")
-    
-    # Create a form for user login
-    with st.form(key='login_form'):
-        username = st.text_input("Username")
-        password = st.text_input("Password", type="password")
-        
-        # Submit button
-        submit_button = st.form_submit_button(label='Login')
-        
-        if submit_button:
-            if username == "admin" and password == "password":
-                st.success("Login successful!")
-            else:
-                st.error("Invalid username or password.")
+     st.title("🍕 CRM Pizzaria - Login")
+
+        with st.form("login_form"):
+            nome = st.text_input("Seu nome")
+            perfil = st.selectbox(
+                "Selecione seu perfil",
+                ["Funcionário", "Motoboy", "Cliente"]
+            )
+            submit = st.form_submit_button("Entrar")
+
+        if submit:
+            if nome.strip() == "":
+                st.error("Por favor, preencha seu nome.")
+                st.stop()
+
+            # Salva na sessão
+            st.session_state["usuario_nome"] = nome
+            st.session_state["usuario_perfil"] = perfil
+            st.session_state["logado"] = True
+            st.success(f"Bem-vindo, {nome}! Você está logado como {perfil}.")
