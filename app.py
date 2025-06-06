@@ -1,7 +1,6 @@
 import streamlit as st
 
 # Importação das views
-from views.login import login_view
 from views.cliente_page import cliente_page
 from views.motoboy_page import motoboy_page
 from views.avaliacao_page import avaliacao_page
@@ -11,18 +10,8 @@ from views.dashboard_page import dashboard_page
 
 #from views.cadastro_usuario import cadastro_usuario_page
 
-# Controle de sessão
-if "logado" not in st.session_state:
-    st.session_state["logado"] = False
-
-# Login
-if not st.session_state["logado"]:
-    login_view()
-
-else:
-    # Dados do usuário logado
-    nome = st.session_state["usuario_nome"]
-    perfil = st.session_state["usuario_perfil"]
+nome = "Amanda"
+perfil = "Funcionário"
 
 # Sidebar com boas-vindas
 st.sidebar.image(
@@ -40,7 +29,7 @@ if perfil == "Funcionário":
         "Avaliações 360°",
         "Fidelidade",
         "Campanhas",
-        "Cadastro de Usuário",  # (opcional interno)
+        "Cadastro de Usuário",
         "Sair"
     ]
 elif perfil == "Motoboy":

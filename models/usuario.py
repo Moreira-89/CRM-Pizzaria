@@ -2,10 +2,9 @@ import hashlib
 from abc import ABC, abstractmethod
 
 class Usuario(ABC):
-    def __init__(self, id: str, nome: str, senha: str, perfil: str, cpf: str, telefone: str):
+    def __init__(self, id: str, nome: str,  perfil: str, cpf: str, telefone: str):
         self._id = id
         self._nome = nome
-        self._senha = self._gerar_hash(senha) if senha else None
         self._perfil = perfil
         self._cpf = cpf  
         self._telefone = telefone
@@ -30,16 +29,6 @@ class Usuario(ABC):
         if not value or not isinstance(value, str):
             raise ValueError("Nome deve ser uma string não vazia")
         self._nome = value
-
-    @property
-    def senha(self) -> str:
-        return self._senha
-    
-    @senha.setter
-    def senha(self, value: str):
-        if not value:
-            raise ValueError("Senha não pode ser vazia")
-        self._senha = self._gerar_hash(value)
 
     @property
     def perfil(self) -> str:
@@ -76,7 +65,6 @@ class Usuario(ABC):
         return {
             "id": self._id,
             "nome": self._nome,
-            "senha": self._senha,
             "perfil": self._perfil,
             "cpf": self._cpf,
             "telefone": self._telefone
@@ -84,28 +72,13 @@ class Usuario(ABC):
 
     @classmethod
     def from_dict(cls, data: dict):
-        # Cria instância sem hash da senha (já está hasheada no banco)
         instance = cls.__new__(cls)
         instance._id = data.get("id")
         instance._nome = data.get("nome")
-        instance._senha = data.get("senha")  # Já hasheada
         instance._perfil = data.get("perfil")
         instance._cpf = data.get("cpf")
         instance._telefone = data.get("telefone")
         return instance
-
-    @staticmethod
-    def _gerar_hash(senha: str) -> str:
-        """Gera hash SHA256 da senha"""
-        if not senha:
-            raise ValueError("Senha não pode ser vazia")
-        return hashlib.sha256(senha.encode()).hexdigest()
-    
-    def validar_senha(self, senha: str) -> bool:
-        """Valida se a senha fornecida corresponde à senha armazenada"""
-        if not senha:
-            return False
-        return self._senha == self._gerar_hash(senha)
 
     @staticmethod
     def _validar_cpf(cpf: str) -> bool:

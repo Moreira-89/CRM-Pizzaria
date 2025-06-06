@@ -2,11 +2,11 @@ from models.usuario import Usuario
 from typing import Dict, Any
 
 class Cliente(Usuario):
-    def __init__(self, id: str, nome: str, senha: str, cpf: str, email: str, 
+    def __init__(self, id: str, nome: str, cpf: str, email: str, 
                  telefone: str, endereco: Dict[str, str], preferencias: Dict[str, Any], 
                  opt_in: Dict[str, bool]):
         # Chama o construtor da classe pai
-        super().__init__(id, nome, senha, "Cliente", cpf, telefone)
+        super().__init__(id, nome, "Cliente", cpf, telefone)
         
         # Atributos específicos do Cliente
         self._email = email
@@ -86,7 +86,6 @@ class Cliente(Usuario):
         # Inicializa atributos da classe pai
         instance._id = data.get("id")
         instance._nome = data.get("nome")
-        instance._senha = data.get("senha")  # Já hasheada
         instance._perfil = "Cliente"
         instance._cpf = data.get("cpf")
         instance._telefone = data.get("telefone")
