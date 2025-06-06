@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import Union
 
 class Avaliacao:
+    """Representa uma avaliação registrada no sistema."""
     def __init__(self, id: str, avaliador: str, avaliado: str, nota: Union[int, float], 
                  comentario: str, data_hora: str = None):
         self._id = id

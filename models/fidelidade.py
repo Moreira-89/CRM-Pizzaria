@@ -1,6 +1,7 @@
 from typing import Optional, List
 
 class Fidelidade:
+    """Armazena informações de programas de fidelidade dos clientes."""
     def __init__(
         self,
         id: Optional[str],
@@ -76,6 +77,7 @@ class Fidelidade:
         self._historico = value.copy()
 
     def to_dict(self) -> dict:
+        """Serializa a instância em um dicionário."""
         return {
             "id": self._id,
             "cliente_id": self._cliente_id,
@@ -88,6 +90,7 @@ class Fidelidade:
 
     @classmethod
     def from_dict(cls, data: dict):
+        """Cria ``Fidelidade`` a partir de um dicionário de dados."""
         return cls(
             id=data.get("id"),
             cliente_id=data.get("cliente_id"),

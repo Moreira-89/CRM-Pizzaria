@@ -2,6 +2,7 @@ from models.usuario import Usuario
 from typing import List, Union
 
 class Motoboy(Usuario):
+    """Modelo representando motoboys cadastrados."""
     def __init__(self, id: str, nome: str, cpf: str, telefone: str,
                  cnh: str, status_operacional: str, zonas_atuacao: List[str] = None, 
                  horarios_disponiveis: List[str] = None, avaliacao_media: float = 0.0, 
