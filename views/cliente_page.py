@@ -24,9 +24,9 @@ def cliente_page():
             email = st.text_input("E-mail", max_chars=100)
             telefone = st.text_input("Telefone", max_chars=15)
             endereco = st.text_input("Endereço Completo", max_chars=200)
-            sms = st.checkbox("Opt-in SMS")
-            email_opt = st.checkbox("Opt-in E-mail")
-            whatsapp = st.checkbox("Opt-in WhatsApp")
+            sms = st.checkbox("💬 SMS")
+            email_opt = st.checkbox("📧 E-mail")
+            whatsapp = st.checkbox("📱 WhatsApp")
             preferencias = st.text_input("Preferências (separe por vírgula)", max_chars=200)
             btn_salvar = st.form_submit_button("Salvar Cliente")
 
