@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Optional
 
 class Campanha:
+    """Modelo que representa dados de uma campanha de marketing."""
     def __init__(
         self,
         id: Optional[str],
@@ -127,6 +128,7 @@ class Campanha:
         self._data_criacao = value
 
     def to_dict(self) -> dict:
+        """Converte o objeto em um dicionário."""
         return {
             "id": self._id,
             "nome": self._nome,
@@ -144,6 +146,7 @@ class Campanha:
 
     @classmethod
     def from_dict(cls, data: dict):
+        """Cria uma instância de ``Campanha`` a partir de um dicionário."""
         return cls(
             id=data.get("id"),
             nome=data.get("nome"),
