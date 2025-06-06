@@ -1,174 +1,134 @@
 import streamlit as st
-
 from views.cliente_page import cliente_page
 from views.motoboy_page import motoboy_page
 from views.avaliacao_page import avaliacao_page
 from views.dashboard_page import dashboard_page
 from views.fidelidade_page import fidelidade_page
 from views.campanha_page import campanha_page
+from views.register_page import register_page
+from dao.usuario_dao import UsuarioDAO
 
-# ----------------------------------------
-# 1. Configuração inicial da página
-# ----------------------------------------
+
 def configurar_pagina():
     st.set_page_config(
         page_title="Sistema de Gestão - Pizzaria",
         page_icon="🍕"
     )
 
-# ----------------------------------------
-# 2. Inicialização do estado de sessão
-# ----------------------------------------
-def inicializar_estado():
-    """
-    Garante que as chaves de session_state existam antes de usar.
-    """
-    if "logado" not in st.session_state:
-        st.session_state["logado"] = False
-    if "usuario_nome" not in st.session_state:
-        st.session_state["usuario_nome"] = ""
-    if "usuario_perfil" not in st.session_state:
-        st.session_state["usuario_perfil"] = ""
-
-# ----------------------------------------
-# 3. Tela de login (sem autenticação real)
-# ----------------------------------------
 def tela_login():
-    """
-    Exibe um formulário de login simples. Ao clicar em 'Entrar', define
-    st.session_state["logado"], ["usuario_nome"] e ["usuario_perfil"], e
-    chama st.rerun() para atualizar a interface.
-    """
-    st.markdown("### 🔒 Login")
-    st.write("Use um dos seguintes pares para testar:")
-    st.markdown(
-        """
-        - **Funcionário**: usuário `admin` / senha `admin`  
-        - **Motoboy**: usuário `motoboy` / senha `123`  
-        - **Cliente**: usuário `cliente` / senha `abc`
-        """
-    )
+    configurar_pagina()
 
-    with st.form(key="form_login", clear_on_submit=True):
-        usuario = st.text_input("Usuário", max_chars=50)
-        senha = st.text_input("Senha", type="password", max_chars=50)
-        btn_entrar = st.form_submit_button("Entrar")
+    st.markdown("### 🔐 Login")
 
-    if btn_entrar:
-        usuario = usuario.strip()
-        senha = senha.strip()
-
-        # Simulação de autenticação
-        if usuario == "admin" and senha == "admin":
-            st.session_state["logado"] = True
-            st.session_state["usuario_nome"] = "Administrador"
-            st.session_state["usuario_perfil"] = "Funcionário"
-        elif usuario == "motoboy" and senha == "123":
-            st.session_state["logado"] = True
-            st.session_state["usuario_nome"] = "Motoboy XPTO"
-            st.session_state["usuario_perfil"] = "Motoboy"
-        elif usuario == "cliente" and senha == "abc":
-            st.session_state["logado"] = True
-            st.session_state["usuario_nome"] = "Cliente XPTO"
-            st.session_state["usuario_perfil"] = "Cliente"
-        else:
-            st.error("Usuário ou senha inválidos.")
-            return
-
-        st.rerun()
-
-# ----------------------------------------
-# 4. Menu principal (após login)
-# ----------------------------------------
-def exibir_menu():
-    """
-    Exibe, na sidebar, a imagem e o menu conforme o perfil do usuário.
-    Em seguida, chama a página correspondente à opção escolhida.
-    """
-    perfil = st.session_state["usuario_perfil"]
-    nome = st.session_state["usuario_nome"]
-
-    # Área fixa no topo da sidebar
-    st.sidebar.image(
-        "https://img.freepik.com/free-vector/pizza-logo-design_23-2149423871.jpg",
-        width=150
-    )
-    st.sidebar.title(f"🍕 Bem-vindo, {nome} ({perfil})")
-    st.sidebar.markdown("---")
-
-    if perfil == "Funcionário":
-        opcoes = [
-            "Dashboard Geral",
-            "Clientes",
-            "Motoboys",
-            "Avaliações 360°",
-            "Fidelidade",
-            "Campanhas",
-            "Sair"
-        ]
-    elif perfil == "Motoboy":
-        opcoes = [
-            "Avaliar Cliente",
-            "Minhas Avaliações",
-            "Sair"
-        ]
-    elif perfil == "Cliente":
-        opcoes = [
-            "Avaliar Pizzaria",
-            "Avaliar Motoboy",
-            "Sair"
-        ]
-    else:
-        st.error("Perfil de usuário inválido. Faça login novamente.")
-        if st.sidebar.button("Logout"):
-            st.session_state.clear()
-            st.rerun()
+    if st.session_state.get("cadastrar", False):
+        register_page()
         return
 
-    escolha = st.sidebar.selectbox("Menu Principal", opcoes)
+    login_id = st.text_input("ID ou E-mail")
+    senha = st.text_input("Senha", type="password")
+    col1, col2 = st.columns([1, 1])
+    with col1:
+        if st.button("Entrar"):
+            usuario_dao = UsuarioDAO()
+            if usuario_dao.autenticar(login_id.strip(), senha.strip()):
+                usuario = usuario_dao.buscar_por_id(login_id.strip())
+                if usuario:
+                    st.session_state["logado"] = True
+                    st.session_state["usuario_nome"] = usuario.nome
+                    st.session_state["usuario_perfil"] = usuario.perfil
+                    st.session_state["usuario_id"] = usuario.id
+                    st.rerun()
+                else:
+                    st.error("Falha ao obter dados de usuário após autenticar.")
+            else:
+                st.error("Usuário ou senha inválidos.")
+    with col2:
+        if st.button("Cadastrar Cliente"):
+            st.session_state["cadastrar"] = True
+            st.rerun()
 
-    if escolha == "Sair":
+
+# Inicializa estado de sessão
+if "logado" not in st.session_state:
+    st.session_state["logado"] = False
+
+if "cadastrar" not in st.session_state:
+    st.session_state["cadastrar"] = False
+
+# Se não estiver logado, exibe tela de login/registro
+if not st.session_state["logado"]:
+    tela_login()
+    st.stop()  # evita mostrar o resto da página antes de logar
+
+# Se chegou aqui, é porque o usuário está logado
+perfil = st.session_state["usuario_perfil"]
+nome = st.session_state["usuario_nome"]
+
+# Barra lateral fixa, depois de logar
+st.sidebar.image(
+    "https://img.freepik.com/free-vector/pizza-logo-design_23-2149423871.jpg",
+    width=150
+)
+st.sidebar.title(f"🍕 Bem-vindo, {nome} ({perfil})")
+
+# Monta menu conforme perfil
+if perfil == "Funcionário":
+    menu = [
+        "Dashboard Geral",
+        "Clientes",
+        "Motoboys",
+        "Avaliações 360°",
+        "Fidelidade",
+        "Campanhas",
+        "Sair"
+    ]
+    escolha = st.sidebar.selectbox("Menu Principal", menu)
+    if escolha == "Dashboard Geral":
+        dashboard_page()
+    elif escolha == "Clientes":
+        cliente_page()
+    elif escolha == "Motoboys":
+        motoboy_page()
+    elif escolha == "Avaliações 360°":
+        avaliacao_page(perfil=perfil, usuario=nome)
+    elif escolha == "Fidelidade":
+        fidelidade_page()
+    elif escolha == "Campanhas":
+        campanha_page()
+    elif escolha == "Sair":
         st.session_state.clear()
         st.rerun()
-        return
 
-    if perfil == "Funcionário":
-        if escolha == "Dashboard Geral":
-            dashboard_page()
-        elif escolha == "Clientes":
-            cliente_page()
-        elif escolha == "Motoboys":
-            motoboy_page()
-        elif escolha == "Avaliações 360°":
-            avaliacao_page(perfil=perfil, usuario=nome, modo="admin")
-        elif escolha == "Fidelidade":
-            fidelidade_page()
-        elif escolha == "Campanhas":
-            campanha_page()
+elif perfil == "Motoboy":
+    menu = [
+        "Avaliar Cliente",
+        "Minhas Avaliações",
+        "Sair"
+    ]
+    escolha = st.sidebar.selectbox("Menu Principal", menu)
+    if escolha == "Avaliar Cliente":
+        avaliacao_page(perfil=perfil, usuario=nome, modo="avaliar_cliente")
+    elif escolha == "Minhas Avaliações":
+        avaliacao_page(perfil=perfil, usuario=nome, modo="minhas_avaliacoes")
+    elif escolha == "Sair":
+        st.session_state.clear()
+        st.rerun()
 
-    elif perfil == "Motoboy":
-        if escolha == "Avaliar Cliente":
-            avaliacao_page(perfil=perfil, usuario=nome, modo="avaliar_cliente")
-        elif escolha == "Minhas Avaliações":
-            avaliacao_page(perfil=perfil, usuario=nome, modo="minhas_avaliacoes")
+elif perfil == "Cliente":
+    menu = [
+        "Avaliar Pizzaria",
+        "Avaliar Motoboy",
+        "Sair"
+    ]
+    escolha = st.sidebar.selectbox("Menu Principal", menu)
+    if escolha == "Avaliar Pizzaria":
+        avaliacao_page(perfil=perfil, usuario=nome, modo="avaliar_pizzaria")
+    elif escolha == "Avaliar Motoboy":
+        avaliacao_page(perfil=perfil, usuario=nome, modo="avaliar_motoboy")
+    elif escolha == "Sair":
+        st.session_state.clear()
+        st.rerun()
 
-    elif perfil == "Cliente":
-        if escolha == "Avaliar Pizzaria":
-            avaliacao_page(perfil=perfil, usuario=nome, modo="avaliar_pizzaria")
-        elif escolha == "Avaliar Motoboy":
-            avaliacao_page(perfil=perfil, usuario=nome, modo="avaliar_motoboy")
-
-# ----------------------------------------
-# 5. Função principal
-# ----------------------------------------
-def main():
-    configurar_pagina()
-    inicializar_estado()
-
-    if not st.session_state["logado"]:
-        tela_login()
-    else:
-        exibir_menu()
-
-if __name__ == "__main__":
-    main()
+st.sidebar.markdown("---")
+st.sidebar.markdown("Desenvolvido por Amanda Taveira Amorim")
+st.sidebar.markdown("Versão 1.0 - 2025")
