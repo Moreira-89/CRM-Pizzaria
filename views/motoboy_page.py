@@ -5,7 +5,7 @@ from views.utils import buscar_por_campo_unico
 from datetime import datetime
 
 def motoboy_page():
-    st.markdown("### 🛵 Gestão de Entregadoress")
+    st.markdown("### 🛵 Gestão de Entregadores")
     motoboy_dao = MotoboyDAO()
 
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]
