@@ -19,7 +19,7 @@ Um sistema de CRM desenvolvido para uma pizzaria, com funcionalidades de gestão
 - 🏆 Programa de Fidelidade
 - 📣 Campanhas de Marketing
 - 📊 Dashboard consolidado de operação
-- ✅ Cadastro interno de usuários
+- ✅ Cadastro interno de usuários (Em desenvolvimento)
 
 ## 🗂️ Estrutura de Pastas
 
