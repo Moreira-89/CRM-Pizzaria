@@ -2,6 +2,7 @@ from models.usuario import Usuario
 from typing import Dict, Any
 
 class Cliente(Usuario):
+    """Modelo que representa um cliente da pizzaria."""
     def __init__(self, id: str, nome: str, cpf: str, email: str, 
                  telefone: str, endereco: Dict[str, str], preferencias: Dict[str, Any], 
                  opt_in: Dict[str, bool]):

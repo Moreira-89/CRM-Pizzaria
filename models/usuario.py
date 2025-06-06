@@ -1,7 +1,7 @@
-import hashlib
-from abc import ABC, abstractmethod
+from abc import ABC
 
 class Usuario(ABC):
+    """Classe base para representar usuários do sistema."""
     def __init__(self, id: str, nome: str,  perfil: str, cpf: str, telefone: str):
         self._id = id
         self._nome = nome
@@ -62,6 +62,7 @@ class Usuario(ABC):
         self._telefone = value
 
     def to_dict(self) -> dict:
+        """Serializa o usuário para um dicionário simples."""
         return {
             "id": self._id,
             "nome": self._nome,
@@ -72,6 +73,7 @@ class Usuario(ABC):
 
     @classmethod
     def from_dict(cls, data: dict):
+        """Cria instância de ``Usuario`` a partir de um dicionário."""
         instance = cls.__new__(cls)
         instance._id = data.get("id")
         instance._nome = data.get("nome")
