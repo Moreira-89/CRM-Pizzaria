@@ -1,5 +1,3 @@
-# views/utils.py
-
 def buscar_por_campo_unico(dao, cpf=None, telefone=None, nome=None):
     """
     Busca um registro em dao por CPF (prioritário), telefone ou nome.

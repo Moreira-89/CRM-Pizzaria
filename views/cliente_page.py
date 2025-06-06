@@ -1,3 +1,5 @@
+# views/cliente_page.py
+
 import streamlit as st
 from dao.cliente_dao import ClienteDAO
 from models.cliente import Cliente
