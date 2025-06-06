@@ -39,7 +39,7 @@ def tela_login():
     st.session_state["logado"], ["usuario_nome"] e ["usuario_perfil"], e
     chama st.rerun() para atualizar a interface.
     """
-    st.title("🔒 Login")
+    st.markdown("### 🔒 Login")
     st.write("Use um dos seguintes pares para testar:")
     st.markdown(
         """
