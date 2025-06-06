@@ -1,28 +1,32 @@
-import uuid
+from typing import Optional, List
 from dao.firebase_dao import FirebaseDAO
 from models.usuario import Usuario
-
 
 class UsuarioDAO(FirebaseDAO):
     def __init__(self):
         super().__init__(collection="usuarios")
 
-    def criar(self, usuario: Usuario):
+    def criar(self, usuario: Usuario) -> Optional[str]:
         if not usuario.id:
-            usuario.id = str(uuid.uuid4())
-        self.db.child(usuario.id).set(usuario.to_dict())
-        return usuario.id
-
-    def buscar_por_nome(self, nome):
-        data = self.db.get()
-        if data and data.val():
-            for item in data.val().values():
-                if item.get("nome", "").lower() == nome.lower():
-                    return Usuario.from_dict(item)
+            raise ValueError("Usuário precisa de um ID")
+        if super().criar(usuario.id, usuario.to_dict()):
+            return usuario.id
         return None
 
-    def listar_todos(self):
-        data = self.db.get()
-        if data and data.val():
-            return [Usuario.from_dict(item) for item in data.val().values()]
-        return []
+    def buscar_por_id(self, id: str) -> Optional[Usuario]:
+        data = super().buscar_por_id(id)
+        if data:
+            return Usuario.from_dict(data)
+        return None
+
+    def listar_todos(self) -> List[Usuario]:
+        dados = super().listar_todos()
+        return [Usuario.from_dict(item) for item in dados if item]
+
+    def atualizar(self, usuario: Usuario) -> bool:
+        if not usuario.id:
+            raise ValueError("ID do usuário não informado para atualização.")
+        return super().atualizar(usuario.id, usuario.to_dict())
+
+    def deletar(self, id: str) -> bool:
+        return super().deletar(id)

@@ -1,28 +1,23 @@
 import streamlit as st
-from models.motoboy import Motoboy
 from dao.motoboy_dao import MotoboyDAO
-
+from models.motoboy import Motoboy
+from views.utils import buscar_por_campo_unico
 
 def motoboy_page():
     st.title("Gestão de Motoboys")
-
     motoboy_dao = MotoboyDAO()
-
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]
     escolha = st.sidebar.selectbox("Ações", menu)
 
     if escolha == "Cadastrar":
         st.subheader("Cadastrar Novo Motoboy")
-
         nome = st.text_input("Nome Completo")
         cpf = st.text_input("CPF")
-        cnh = st.text_input("Número da CNH")
+        cnh = st.text_input("CNH")
         telefone = st.text_input("Telefone")
         status = st.selectbox("Status Operacional", ["Online", "Offline"])
-
         zonas = st.text_input("Zonas de Atuação (separe por vírgula)")
-        horarios = st.text_input("Horários Disponíveis (ex.: Seg a Sex 18h-23h)")
-
+        horarios = st.text_input("Horários Disponíveis (separe por vírgula)")
         if st.button("Salvar"):
             motoboy = Motoboy(
                 id=None,
@@ -40,7 +35,6 @@ def motoboy_page():
     elif escolha == "Listar":
         st.subheader("Lista de Motoboys")
         motoboys = motoboy_dao.listar_todos()
-
         for m in motoboys:
             st.markdown(f"**ID:** {m.id}")
             st.markdown(f"**Nome:** {m.nome}")
@@ -54,15 +48,15 @@ def motoboy_page():
 
     elif escolha == "Atualizar":
         st.subheader("Atualizar Motoboy")
-        id_motoboy = st.text_input("ID do Motoboy")
-
+        cpf = st.text_input("CPF")
+        telefone = st.text_input("Telefone")
+        nome_busca = st.text_input("Nome Completo")
         if st.button("Buscar"):
-            m = motoboy_dao.buscar_por_id(id_motoboy)
+            m, erro = buscar_por_campo_unico(motoboy_dao, cpf=cpf, telefone=telefone, nome=nome_busca)
             if m:
                 nome = st.text_input("Nome Completo", m.nome)
                 telefone = st.text_input("Telefone", m.telefone)
                 status = st.selectbox("Status Operacional", ["Online", "Offline"], index=0 if m.status_operacional == "Online" else 1)
-
                 if st.button("Atualizar"):
                     m.nome = nome
                     m.telefone = telefone
@@ -70,16 +64,18 @@ def motoboy_page():
                     motoboy_dao.atualizar(m)
                     st.success("Motoboy atualizado com sucesso!")
             else:
-                st.error("Motoboy não encontrado.")
+                st.error(erro)
 
     elif escolha == "Deletar":
         st.subheader("Deletar Motoboy")
-        id_motoboy = st.text_input("ID do Motoboy")
-
-        if st.button("Deletar"):
-            m = motoboy_dao.buscar_por_id(id_motoboy)
+        cpf = st.text_input("CPF")
+        telefone = st.text_input("Telefone")
+        nome_busca = st.text_input("Nome Completo")
+        if st.button("Buscar"):
+            m, erro = buscar_por_campo_unico(motoboy_dao, cpf=cpf, telefone=telefone, nome=nome_busca)
             if m:
-                motoboy_dao.deletar(id_motoboy)
-                st.success("Motoboy deletado com sucesso!")
+                if st.button("Confirmar Exclusão"):
+                    motoboy_dao.deletar(m.id)
+                    st.success("Motoboy deletado com sucesso!")
             else:
-                st.error("Motoboy não encontrado.")
+                st.error(erro)

@@ -1,31 +1,25 @@
 import streamlit as st
-from models.cliente import Cliente
 from dao.cliente_dao import ClienteDAO
-
+from models.cliente import Cliente
+from views.utils import buscar_por_campo_unico
 
 def cliente_page():
     st.title("Gestão de Clientes")
-
     cliente_dao = ClienteDAO()
-
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]
     escolha = st.sidebar.selectbox("Ações", menu)
 
     if escolha == "Cadastrar":
         st.subheader("Cadastrar Novo Cliente")
-
         nome = st.text_input("Nome Completo")
         cpf = st.text_input("CPF/CNPJ")
         email = st.text_input("E-mail")
         telefone = st.text_input("Telefone")
         endereco = st.text_input("Endereço Completo")
-
         sms = st.checkbox("Opt-in SMS")
         email_opt = st.checkbox("Opt-in E-mail")
         whatsapp = st.checkbox("Opt-in WhatsApp")
-
         preferencias = st.text_input("Preferências (separe por vírgula)")
-
         if st.button("Salvar"):
             cliente = Cliente(
                 id=None,
@@ -43,7 +37,6 @@ def cliente_page():
     elif escolha == "Listar":
         st.subheader("Lista de Clientes")
         clientes = cliente_dao.listar_todos()
-
         for cliente in clientes:
             st.markdown(f"**ID:** {cliente.id}")
             st.markdown(f"**Nome:** {cliente.nome}")
@@ -55,15 +48,15 @@ def cliente_page():
 
     elif escolha == "Atualizar":
         st.subheader("Atualizar Cliente")
-        id_cliente = st.text_input("ID do Cliente")
-
+        cpf = st.text_input("CPF")
+        telefone = st.text_input("Telefone")
+        nome_busca = st.text_input("Nome Completo")
         if st.button("Buscar"):
-            cliente = cliente_dao.buscar_por_id(id_cliente)
+            cliente, erro = buscar_por_campo_unico(cliente_dao, cpf=cpf, telefone=telefone, nome=nome_busca)
             if cliente:
                 nome = st.text_input("Nome Completo", cliente.nome)
                 telefone = st.text_input("Telefone", cliente.telefone)
                 endereco = st.text_input("Endereço", cliente.endereco)
-
                 if st.button("Atualizar"):
                     cliente.nome = nome
                     cliente.telefone = telefone
@@ -71,16 +64,18 @@ def cliente_page():
                     cliente_dao.atualizar(cliente)
                     st.success("Cliente atualizado com sucesso!")
             else:
-                st.error("Cliente não encontrado.")
+                st.error(erro)
 
     elif escolha == "Deletar":
         st.subheader("Deletar Cliente")
-        id_cliente = st.text_input("ID do Cliente")
-
-        if st.button("Deletar"):
-            cliente = cliente_dao.buscar_por_id(id_cliente)
+        cpf = st.text_input("CPF")
+        telefone = st.text_input("Telefone")
+        nome_busca = st.text_input("Nome Completo")
+        if st.button("Buscar"):
+            cliente, erro = buscar_por_campo_unico(cliente_dao, cpf=cpf, telefone=telefone, nome=nome_busca)
             if cliente:
-                cliente_dao.deletar(id_cliente)
-                st.success("Cliente deletado com sucesso!")
+                if st.button("Confirmar Exclusão"):
+                    cliente_dao.deletar(cliente.id)
+                    st.success("Cliente deletado com sucesso!")
             else:
-                st.error("Cliente não encontrado.")
+                st.error(erro)
