@@ -16,7 +16,7 @@ def motoboy_page():
         cpf = st.text_input("CPF")
         cnh = st.text_input("CNH")
         telefone = st.text_input("Telefone")
-        status = st.selectbox("Status Operacional", ["Online", "Offline"])
+        status = st.selectbox("Status Operacional", ["Ativo", "Inativo", "Pausado", "Em Entrega"])
         zonas = st.text_input("Zonas de Atuação (separe por vírgula)")
         horarios = st.text_input("Horários Disponíveis (separe por vírgula)")
         if st.button("Salvar"):
