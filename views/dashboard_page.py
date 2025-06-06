@@ -25,7 +25,7 @@ def carregar_dados_dashboard():
     return clientes, motoboys, avaliacoes, fidelidades, campanhas
 
 def dashboard_page():
-    st.title("📊 Dashboard Geral da Operação")
+    st.markdown("### 📊 Dashboard Geral da Operação")
 
     clientes, motoboys, avaliacoes, fidelidades, campanhas = carregar_dados_dashboard()
 

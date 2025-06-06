@@ -7,7 +7,7 @@ from views.utils import buscar_por_campo_unico
 from datetime import datetime
 
 def cliente_page():
-    st.title("🧑 Gestão de Clientes")
+    st.markdown("### 🧑 Gestão de Clientes")
     cliente_dao = ClienteDAO()
 
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]
