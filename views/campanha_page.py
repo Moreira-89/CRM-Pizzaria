@@ -4,7 +4,7 @@ from dao.campanha_dao import CampanhaDAO
 from datetime import datetime, date
 
 def campanha_page():
-    st.title("🎯 Gestão de Campanhas de Marketing")
+    st.markdown("### 🎯 Gestão de Campanhas de Marketing")
     campanha_dao = CampanhaDAO()
 
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]

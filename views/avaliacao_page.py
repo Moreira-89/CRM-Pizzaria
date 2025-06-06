@@ -14,7 +14,7 @@ def avaliacao_page(perfil: str, usuario: str, modo: str = None):
       - perfil == "Motoboy" e modo == "minhas_avaliacoes": lista avaliações feitas pelo motoboy
       - perfil == "Cliente" e modo == "avaliar_motoboy": formulário de avaliação de motoboy
     """
-    st.title("⭐ Avaliações")
+    st.markdown("### ⭐ Avaliações")
     avaliacao_dao = AvaliacaoDAO()
     cliente_dao = ClienteDAO()
     motoboy_dao = MotoboyDAO()

@@ -5,7 +5,7 @@ from views.utils import buscar_por_campo_unico
 from datetime import datetime
 
 def motoboy_page():
-    st.title("🛵 Gestão de Motoboys")
+    st.markdown("### 🛵 Gestão de Entregadores")
     motoboy_dao = MotoboyDAO()
 
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]
@@ -15,7 +15,7 @@ def motoboy_page():
     # 1. Cadastrar
     # ======================
     if escolha == "Cadastrar":
-        st.subheader("➕ Cadastrar Novo Motoboy")
+        st.subheader("➕ Cadastrar novo Entregador")
         with st.form(key="form_cadastrar_motoboy", clear_on_submit=True):
             nome = st.text_input("Nome Completo*", max_chars=100)
             cpf = st.text_input("CPF*", max_chars=18)
@@ -24,7 +24,7 @@ def motoboy_page():
             status = st.selectbox("Status Operacional*", ["Online", "Offline"])
             zonas = st.text_input("Zonas de Atuação (separe por vírgula)", max_chars=200)
             horarios = st.text_input("Horários Disponíveis (separe por vírgula)", max_chars=200)
-            btn_salvar = st.form_submit_button("Salvar Motoboy")
+            btn_salvar = st.form_submit_button("Salvar Entregador")
 
         if btn_salvar:
             erros = []
@@ -51,7 +51,7 @@ def motoboy_page():
                 )
                 ok, msg = motoboy_dao.criar(motoboy)
                 if ok:
-                    st.success(f"Motoboy '{nome}' cadastrado com sucesso!")
+                    st.success(f"Entregador '{nome}' cadastrado com sucesso!")
                 else:
                     st.error(f"Erro ao cadastrar motoboy: {msg}")
 
@@ -61,7 +61,7 @@ def motoboy_page():
     # 2. Listar
     # ======================
     if escolha == "Listar":
-        st.subheader("📋 Lista de Motoboys")
+        st.subheader("📋 Lista de Entregadores")
         motoboys = motoboy_dao.listar_todos()
         if not motoboys:
             st.info("Nenhum motoboy cadastrado.")
@@ -87,7 +87,7 @@ def motoboy_page():
     # 3. Atualizar
     # ======================
     if escolha == "Atualizar":
-        st.subheader("✏️ Atualizar Motoboy")
+        st.subheader("✏️ Atualizar Entregador")
         with st.form(key="form_buscar_motoboy"):
             cpf_busca = st.text_input("CPF para busca", max_chars=18)
             telefone_busca = st.text_input("Telefone para busca", max_chars=15)
@@ -141,7 +141,7 @@ def motoboy_page():
                         m.data_atualizacao = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                         ok, msg = motoboy_dao.atualizar(m)
                         if ok:
-                            st.success("Motoboy atualizado com sucesso!")
+                            st.success("Entregador atualizado com sucesso!")
                         else:
                             st.error(f"Erro ao atualizar motoboy: {msg}")
 
@@ -151,7 +151,7 @@ def motoboy_page():
     # 4. Deletar
     # ======================
     if escolha == "Deletar":
-        st.subheader("❌ Deletar Motoboy")
+        st.subheader("❌ Deletar Entregador")
         with st.form(key="form_deletar_motoboy"):
             cpf_busca = st.text_input("CPF para busca", max_chars=18)
             telefone_busca = st.text_input("Telefone para busca", max_chars=15)
@@ -168,13 +168,13 @@ def motoboy_page():
             if not m:
                 st.error(erro)
             else:
-                st.warning(f"Tem certeza que deseja deletar o motoboy: {m.nome} (ID: {m.id})?")
+                st.warning(f"Tem certeza que deseja deletar o entregador: {m.nome} (ID: {m.id})?")
                 if st.button("Confirmar Exclusão"):
                     ok, msg = motoboy_dao.deletar(m.id)
                     if ok:
-                        st.success("Motoboy deletado com sucesso!")
+                        st.success("Entregador deletado com sucesso!")
                     else:
-                        st.error(f"Erro ao deletar motoboy: {msg}")
+                        st.error(f"Erro ao deletar entregador: {msg}")
 
         return
 

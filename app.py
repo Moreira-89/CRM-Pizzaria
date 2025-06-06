@@ -13,8 +13,7 @@ from views.campanha_page import campanha_page
 def configurar_pagina():
     st.set_page_config(
         page_title="Sistema de Gestão - Pizzaria",
-        page_icon="🍕",
-        layout="wide"
+        page_icon="🍕"
     )
 
 # ----------------------------------------
@@ -40,7 +39,7 @@ def tela_login():
     st.session_state["logado"], ["usuario_nome"] e ["usuario_perfil"], e
     chama st.rerun() para atualizar a interface.
     """
-    st.title("🔒 Login")
+    st.markdown("### 🔒 Login")
     st.write("Use um dos seguintes pares para testar:")
     st.markdown(
         """

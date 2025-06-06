@@ -5,7 +5,7 @@ from dao.cliente_dao import ClienteDAO
 from datetime import datetime, date
 
 def fidelidade_page():
-    st.title("🎁 Gestão do Programa de Fidelidade")
+    st.markdown("### 🎁 Gestão do Programa de Fidelidade")
     fidelidade_dao = FidelidadeDAO()
     cliente_dao = ClienteDAO()
 
