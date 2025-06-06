@@ -1,3 +1,5 @@
+# dao/motoboy_dao.py
+
 import uuid
 from typing import List, Optional
 from dao.firebase_dao import FirebaseDAO
@@ -6,310 +8,288 @@ import logging
 
 logger = logging.getLogger(__name__)
 
+
 class MotoboyDAO(FirebaseDAO):
-    """DAO para operações com motoboys"""
-    
+    """
+    DAO para operações CRUD de motoboys no Firebase RTDB.
+    Collection padrão: "motoboys".
+    """
+
     def __init__(self):
         super().__init__(collection="motoboys")
 
     def criar(self, motoboy: Motoboy) -> Optional[str]:
         """
-        Cria um novo motoboy
-        
+        Cria um novo motoboy.
+
         Args:
-            motoboy: Instância de Motoboy
-            
+            motoboy: Instância de Motoboy.
+
         Returns:
-            str: ID do motoboy criado ou None se falhou
+            str: ID gerado ou None se falhou.
         """
         try:
             if not isinstance(motoboy, Motoboy):
                 raise ValueError("Parâmetro deve ser uma instância de Motoboy")
-            
+
             if not motoboy.id:
                 motoboy.id = str(uuid.uuid4())
-            
-            # Verifica se já existe motoboy com mesmo CPF ou CNH
+
+            # Verifica existência por CPF ou CNH
             if self._motoboy_existe_por_cpf_ou_cnh(motoboy.cpf, motoboy.cnh):
                 raise ValueError("Já existe motoboy com este CPF ou CNH")
-            
-            if super().criar(motoboy.id, motoboy.to_dict()):
+
+            sucesso = super().criar(motoboy.id, motoboy.to_dict())
+            if sucesso:
                 return motoboy.id
             return None
-            
         except Exception as e:
-            logger.error(f"Erro ao criar motoboy: {str(e)}")
+            logger.error(f"[motoboys] Erro ao criar motoboy: {e}")
             return None
 
     def buscar_por_id(self, id: str) -> Optional[Motoboy]:
         """
-        Busca motoboy por ID
-        
+        Busca motoboy pelo ID.
+
         Args:
-            id: ID do motoboy
-            
+            id: ID do motoboy.
+
         Returns:
-            Motoboy: Instância do motoboy ou None se não encontrado
+            Motoboy: Instância ou None se não encontrado.
         """
         try:
             data = super().buscar_por_id(id)
             if data:
                 return Motoboy.from_dict(data)
             return None
-            
         except Exception as e:
-            logger.error(f"Erro ao buscar motoboy por ID {id}: {str(e)}")
+            logger.error(f"[motoboys] Erro ao buscar motoboy por ID '{id}': {e}")
             return None
 
     def buscar_por_nome(self, nome: str) -> Optional[Motoboy]:
         """
-        Busca motoboy por nome (case-insensitive)
-        
+        Busca primeiro motoboy com nome exato (case-insensitive).
+
         Args:
-            nome: Nome do motoboy
-            
+            nome: Nome do motoboy.
+
         Returns:
-            Motoboy: Primeira ocorrência encontrada ou None
+            Motoboy: Instância ou None se não encontrado.
         """
         try:
             if not nome or not isinstance(nome, str):
                 return None
-            
-            motoboys = self.listar_todos()
-            for motoboy in motoboys:
-                if motoboy.nome.lower() == nome.lower():
-                    return motoboy
+            todos = self.listar_todos()
+            for m in todos:
+                if m.nome.lower() == nome.lower():
+                    return m
             return None
-            
         except Exception as e:
-            logger.error(f"Erro ao buscar motoboy por nome {nome}: {str(e)}")
+            logger.error(f"[motoboys] Erro ao buscar motoboy por nome '{nome}': {e}")
             return None
 
     def buscar_por_cpf(self, cpf: str) -> Optional[Motoboy]:
         """
-        Busca motoboy por CPF
-        
+        Busca motoboy pelo CPF (ignora formatação, compara apenas dígitos).
+
         Args:
-            cpf: CPF do motoboy
-            
+            cpf: CPF do motoboy.
+
         Returns:
-            Motoboy: Instância do motoboy ou None se não encontrado
+            Motoboy: Instância ou None se não encontrado.
         """
         try:
             if not cpf or not isinstance(cpf, str):
                 return None
-            
-            # Remove formatação do CPF
+
             cpf_limpo = ''.join(filter(str.isdigit, cpf))
-            
-            motoboys = self.listar_todos()
-            for motoboy in motoboys:
-                cpf_motoboy_limpo = ''.join(filter(str.isdigit, motoboy.cpf))
-                if cpf_motoboy_limpo == cpf_limpo:
-                    return motoboy
+            todos = self.listar_todos()
+            for m in todos:
+                m_cpf_limpo = ''.join(filter(str.isdigit, m.cpf))
+                if m_cpf_limpo == cpf_limpo:
+                    return m
             return None
-            
         except Exception as e:
-            logger.error(f"Erro ao buscar motoboy por CPF {cpf}: {str(e)}")
+            logger.error(f"[motoboys] Erro ao buscar motoboy por CPF '{cpf}': {e}")
             return None
 
     def buscar_por_cnh(self, cnh: str) -> Optional[Motoboy]:
         """
-        Busca motoboy por CNH
-        
+        Busca motoboy pela CNH (ignora formatação, compara apenas dígitos).
+
         Args:
-            cnh: CNH do motoboy
-            
+            cnh: CNH do motoboy.
+
         Returns:
-            Motoboy: Instância do motoboy ou None se não encontrado
+            Motoboy: Instância ou None se não encontrado.
         """
         try:
             if not cnh or not isinstance(cnh, str):
                 return None
-            
-            # Remove formatação da CNH
+
             cnh_limpa = ''.join(filter(str.isdigit, cnh))
-            
-            motoboys = self.listar_todos()
-            for motoboy in motoboys:
-                cnh_motoboy_limpa = ''.join(filter(str.isdigit, motoboy.cnh))
-                if cnh_motoboy_limpa == cnh_limpa:
-                    return motoboy
+            todos = self.listar_todos()
+            for m in todos:
+                m_cnh_limpa = ''.join(filter(str.isdigit, m.cnh))
+                if m_cnh_limpa == cnh_limpa:
+                    return m
             return None
-            
         except Exception as e:
-            logger.error(f"Erro ao buscar motoboy por CNH {cnh}: {str(e)}")
+            logger.error(f"[motoboys] Erro ao buscar motoboy por CNH '{cnh}': {e}")
             return None
 
     def listar_todos(self) -> List[Motoboy]:
         """
-        Lista todos os motoboys
-        
+        Lista todos os motoboys.
+
         Returns:
-            List[Motoboy]: Lista de motoboys
+            List[Motoboy]: Lista de instâncias.
         """
         try:
             dados = super().listar_todos()
             return [Motoboy.from_dict(item) for item in dados if item]
-            
         except Exception as e:
-            logger.error(f"Erro ao listar motoboys: {str(e)}")
+            logger.error(f"[motoboys] Erro ao listar motoboys: {e}")
             return []
 
     def listar_ativos(self) -> List[Motoboy]:
         """
-        Lista apenas motoboys ativos
-        
+        Lista apenas motoboys com status 'Online'.
+
         Returns:
-            List[Motoboy]: Lista de motoboys ativos
+            List[Motoboy]: Motoboys ativos.
         """
         try:
-            motoboys = self.listar_todos()
-            return [motoboy for motoboy in motoboys if motoboy.esta_disponivel()]
-            
+            todos = self.listar_todos()
+            return [m for m in todos if m.esta_disponivel()]
         except Exception as e:
-            logger.error(f"Erro ao listar motoboys ativos: {str(e)}")
+            logger.error(f"[motoboys] Erro ao listar motoboys ativos: {e}")
             return []
 
     def listar_por_status(self, status: str) -> List[Motoboy]:
         """
-        Lista motoboys por status operacional
-        
+        Lista motoboys por status operacional exato.
+
         Args:
-            status: Status operacional
-            
+            status: "Online" ou "Offline".
+
         Returns:
-            List[Motoboy]: Lista de motoboys com o status especificado
+            List[Motoboy]: Motoboys que correspondem ao status.
         """
         try:
-            if not status:
+            if not status or not isinstance(status, str):
                 return []
-            
-            motoboys = self.listar_todos()
-            return [
-                motoboy for motoboy in motoboys 
-                if motoboy.status_operacional == status
-            ]
-            
+            todos = self.listar_todos()
+            return [m for m in todos if m.status_operacional == status]
         except Exception as e:
-            logger.error(f"Erro ao listar motoboys por status {status}: {str(e)}")
+            logger.error(f"[motoboys] Erro ao listar por status '{status}': {e}")
             return []
 
     def listar_por_zona(self, zona: str) -> List[Motoboy]:
         """
-        Lista motoboys que atendem uma zona específica
-        
+        Lista motoboys que atendem a uma zona específica.
+
         Args:
-            zona: Nome da zona
-            
+            zona: Nome da zona.
+
         Returns:
-            List[Motoboy]: Lista de motoboys que atendem a zona
+            List[Motoboy]: Motoboys que podem atuar na zona.
         """
         try:
-            if not zona:
+            if not zona or not isinstance(zona, str):
                 return []
-            
-            motoboys = self.listar_todos()
-            return [
-                motoboy for motoboy in motoboys 
-                if motoboy.pode_atender_zona(zona)
-            ]
-            
+            todos = self.listar_todos()
+            return [m for m in todos if m.pode_atender_zona(zona)]
         except Exception as e:
-            logger.error(f"Erro ao listar motoboys por zona {zona}: {str(e)}")
+            logger.error(f"[motoboys] Erro ao listar por zona '{zona}': {e}")
             return []
 
     def atualizar(self, motoboy: Motoboy) -> bool:
         """
-        Atualiza um motoboy existente
-        
+        Atualiza dados de um motoboy existente.
+
         Args:
-            motoboy: Instância do motoboy com dados atualizados
-            
+            motoboy: Instância de Motoboy com ID preenchido.
+
         Returns:
-            bool: True se atualizado com sucesso
+            bool: True se atualizado com sucesso.
         """
         try:
             if not isinstance(motoboy, Motoboy):
                 raise ValueError("Parâmetro deve ser uma instância de Motoboy")
-            
             if not motoboy.id:
                 raise ValueError("ID do motoboy não informado para atualização")
-            
+
             return super().atualizar(motoboy.id, motoboy.to_dict())
-            
         except Exception as e:
-            logger.error(f"Erro ao atualizar motoboy {motoboy.id}: {str(e)}")
+            logger.error(f"[motoboys] Erro ao atualizar motoboy '{getattr(motoboy, 'id', None)}': {e}")
             return False
 
     def deletar(self, id: str) -> bool:
         """
-        Remove um motoboy
-        
+        Deleta um motoboy pelo ID.
+
         Args:
-            id: ID do motoboy
-            
+            id: ID do motoboy.
+
         Returns:
-            bool: True se removido com sucesso
+            bool: True se excluído com sucesso.
         """
         try:
             return super().deletar(id)
         except Exception as e:
-            logger.error(f"Erro ao deletar motoboy {id}: {str(e)}")
+            logger.error(f"[motoboys] Erro ao deletar motoboy '{id}': {e}")
             return False
 
     def _motoboy_existe_por_cpf_ou_cnh(self, cpf: str, cnh: str) -> bool:
         """
-        Verifica se já existe motoboy com o CPF ou CNH informado
-        
+        Verifica se já existe motoboy com CPF ou CNH fornecidos.
+
         Args:
-            cpf: CPF a verificar
-            cnh: CNH a verificar
-            
+            cpf: CPF a verificar.
+            cnh: CNH a verificar.
+
         Returns:
-            bool: True se já existe
+            bool: True se já existir, False caso contrário.
         """
         try:
-            return (self.buscar_por_cpf(cpf) is not None or 
-                    self.buscar_por_cnh(cnh) is not None)
+            return (self.buscar_por_cpf(cpf) is not None) or (self.buscar_por_cnh(cnh) is not None)
         except Exception:
             return False
 
     def obter_estatisticas(self) -> dict:
         """
-        Obtém estatísticas dos motoboys
-        
+        Retorna estatísticas gerais sobre motoboys:
+         - total
+         - ativos, inativos
+         - avaliação média geral
+         - tempo médio de entrega
+
         Returns:
-            dict: Estatísticas dos motoboys
+            dict: Estatísticas calculadas.
         """
         try:
-            motoboys = self.listar_todos()
-            
-            if not motoboys:
+            todos = self.listar_todos()
+            total = len(todos)
+            if total == 0:
                 return {}
-            
-            total = len(motoboys)
-            ativos = len([m for m in motoboys if m.status_operacional == "Ativo"])
-            inativos = len([m for m in motoboys if m.status_operacional == "Inativo"])
-            em_entrega = len([m for m in motoboys if m.status_operacional == "Em Entrega"])
-            
-            # Calcula avaliação média geral
-            avaliacoes = [m.avaliacao_media for m in motoboys if m.avaliacao_media > 0]
-            avaliacao_media_geral = sum(avaliacoes) / len(avaliacoes) if avaliacoes else 0
-            
-            # Calcula tempo médio de entrega geral
-            tempos = [m.tempo_medio_entrega for m in motoboys if m.tempo_medio_entrega > 0]
-            tempo_medio_geral = sum(tempos) / len(tempos) if tempos else 0
-            
+
+            ativos = len([m for m in todos if m.esta_disponivel()])
+            inativos = total - ativos
+            # Avaliação média geral (considera apenas valores > 0)
+            avals = [m.avaliacao_media for m in todos if m.avaliacao_media > 0]
+            media_geral = sum(avals) / len(avals) if avals else 0.0
+            # Tempo médio de entrega geral (≥0)
+            tempos = [m.tempo_medio_entrega for m in todos if m.tempo_medio_entrega > 0]
+            tempo_medio_geral = sum(tempos) / len(tempos) if tempos else 0.0
+
             return {
                 "total": total,
                 "ativos": ativos,
                 "inativos": inativos,
-                "em_entrega": em_entrega,
-                "avaliacao_media_geral": round(avaliacao_media_geral, 2),
+                "avaliacao_media_geral": round(media_geral, 2),
                 "tempo_medio_entrega_geral": round(tempo_medio_geral, 2)
             }
-            
         except Exception as e:
-            logger.error(f"Erro ao obter estatísticas dos motoboys: {str(e)}")
+            logger.error(f"[motoboys] Erro ao obter estatísticas gerais: {e}")
             return {}
