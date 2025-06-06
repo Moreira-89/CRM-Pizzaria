@@ -23,6 +23,7 @@ Um sistema de CRM desenvolvido para uma pizzaria, com funcionalidades de gestão
 
 ## 🗂️ Estrutura de Pastas
 
+```bash
 crm-pizzaria/
 ├── app.py # Ponto de entrada da aplicação
 ├── requirements.txt # Dependências
@@ -52,7 +53,7 @@ crm-pizzaria/
 │ ├── fidelidade_page.py
 │ ├── campanha_page.py
 │ └── dashboard_page.py
-
+```
 
 ## 🔧 Configuração Inicial
 
