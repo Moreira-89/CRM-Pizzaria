@@ -2,81 +2,180 @@ import streamlit as st
 from dao.motoboy_dao import MotoboyDAO
 from models.motoboy import Motoboy
 from views.utils import buscar_por_campo_unico
-
+from datetime import datetime
 
 def motoboy_page():
-    st.title("Gestão de Entregadores")
+    st.title("🛵 Gestão de Motoboys")
     motoboy_dao = MotoboyDAO()
+
     menu = ["Cadastrar", "Listar", "Atualizar", "Deletar"]
-    escolha = st.sidebar.selectbox("Ações", menu)
+    escolha = st.sidebar.selectbox("Ações (Motoboy)", menu)
 
+    # ======================
+    # 1. Cadastrar
+    # ======================
     if escolha == "Cadastrar":
-        st.subheader("Cadastrar novo entregador")
-        nome = st.text_input("Nome Completo")
-        cpf = st.text_input("CPF")
-        cnh = st.text_input("CNH")
-        telefone = st.text_input("Telefone")
-        status = st.selectbox("Status Operacional", ["Ativo", "Inativo", "Pausado", "Em Entrega"])
-        zonas = st.text_input("Zonas de Atuação (separe por vírgula)")
-        horarios = st.text_input("Horários Disponíveis (separe por vírgula)")
-        if st.button("Salvar"):
-            motoboy = Motoboy(
-                id=None,
-                nome=nome,
-                cpf=cpf,
-                cnh=cnh,
-                telefone=telefone,
-                status_operacional=status,
-                zonas_atuacao=[z.strip() for z in zonas.split(",")] if zonas else [],
-                horarios_disponiveis=[h.strip() for h in horarios.split(",")] if horarios else [],
-            )
-            motoboy_dao.criar(motoboy)
-            st.success(f"Entregador {nome} cadastrado com sucesso!")
+        st.subheader("➕ Cadastrar Novo Motoboy")
+        with st.form(key="form_cadastrar_motoboy", clear_on_submit=True):
+            nome = st.text_input("Nome Completo*", max_chars=100)
+            cpf = st.text_input("CPF*", max_chars=18)
+            cnh = st.text_input("CNH*", max_chars=20)
+            telefone = st.text_input("Telefone", max_chars=15)
+            status = st.selectbox("Status Operacional*", ["Online", "Offline"])
+            zonas = st.text_input("Zonas de Atuação (separe por vírgula)", max_chars=200)
+            horarios = st.text_input("Horários Disponíveis (separe por vírgula)", max_chars=200)
+            btn_salvar = st.form_submit_button("Salvar Motoboy")
 
-    elif escolha == "Listar":
-        st.subheader("Lista de Entregadores")
+        if btn_salvar:
+            erros = []
+            if not nome.strip():
+                erros.append("O campo Nome é obrigatório.")
+            if not cpf.strip():
+                erros.append("O campo CPF é obrigatório.")
+            if not cnh.strip():
+                erros.append("O campo CNH é obrigatório.")
+            if erros:
+                for e in erros:
+                    st.error(e)
+            else:
+                motoboy = Motoboy(
+                    id=None,
+                    nome=nome.strip(),
+                    cpf=cpf.strip(),
+                    cnh=cnh.strip(),
+                    telefone=telefone.strip(),
+                    status_operacional=status,
+                    zonas_atuacao=[z.strip() for z in zonas.split(",")] if zonas else [],
+                    horarios_disponiveis=[h.strip() for h in horarios.split(",")] if horarios else [],
+                    data_criacao=datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                )
+                ok, msg = motoboy_dao.criar(motoboy)
+                if ok:
+                    st.success(f"Motoboy '{nome}' cadastrado com sucesso!")
+                else:
+                    st.error(f"Erro ao cadastrar motoboy: {msg}")
+
+        return
+
+    # ======================
+    # 2. Listar
+    # ======================
+    if escolha == "Listar":
+        st.subheader("📋 Lista de Motoboys")
         motoboys = motoboy_dao.listar_todos()
-        for m in motoboys:
-            st.markdown(f"**ID:** {m.id}")
-            st.markdown(f"**Nome:** {m.nome}")
-            st.markdown(f"**CPF:** {m.cpf}")
-            st.markdown(f"**CNH:** {m.cnh}")
-            st.markdown(f"**Telefone:** {m.telefone}")
-            st.markdown(f"**Status:** {m.status_operacional}")
-            st.markdown(f"**Zonas:** {', '.join(m.zonas_atuacao)}")
-            st.markdown(f"**Horários:** {', '.join(m.horarios_disponiveis)}")
-            st.markdown("---")
+        if not motoboys:
+            st.info("Nenhum motoboy cadastrado.")
+        else:
+            dados = []
+            for m in motoboys:
+                dados.append({
+                    "ID": m.id,
+                    "Nome": m.nome,
+                    "CPF": m.cpf,
+                    "CNH": m.cnh,
+                    "Telefone": m.telefone or "",
+                    "Status": m.status_operacional,
+                    "Zonas de Atuação": ", ".join(m.zonas_atuacao) if m.zonas_atuacao else "",
+                    "Horários Disponíveis": ", ".join(m.horarios_disponiveis) if m.horarios_disponiveis else "",
+                    "Data de Criação": m.data_criacao
+                })
+            st.table(dados)
 
-    elif escolha == "Atualizar":
-        st.subheader("Atualizar Entregador")
-        cpf = st.text_input("CPF")
-        telefone = st.text_input("Telefone")
-        nome_busca = st.text_input("Nome Completo")
-        if st.button("Buscar"):
-            m, erro = buscar_por_campo_unico(motoboy_dao, cpf=cpf, telefone=telefone, nome=nome_busca)
-            if m:
-                nome = st.text_input("Nome Completo", m.nome)
-                telefone = st.text_input("Telefone", m.telefone)
-                status = st.selectbox("Status Operacional", ["Ativo", "Inativo", "Pausado", "Em Entrega"], index=0 if m.status_operacional == "Online" else 1)
-                if st.button("Atualizar"):
-                    m.nome = nome
-                    m.telefone = telefone
-                    m.status_operacional = status
-                    motoboy_dao.atualizar(m)
-                    st.success("Entregador atualizado com sucesso!")
-            else:
+        return
+
+    # ======================
+    # 3. Atualizar
+    # ======================
+    if escolha == "Atualizar":
+        st.subheader("✏️ Atualizar Motoboy")
+        with st.form(key="form_buscar_motoboy"):
+            cpf_busca = st.text_input("CPF para busca", max_chars=18)
+            telefone_busca = st.text_input("Telefone para busca", max_chars=15)
+            nome_busca = st.text_input("Nome para busca", max_chars=100)
+            btn_buscar = st.form_submit_button("Buscar")
+
+        if btn_buscar:
+            m, erro = buscar_por_campo_unico(
+                motoboy_dao,
+                cpf=cpf_busca.strip(),
+                telefone=telefone_busca.strip(),
+                nome=nome_busca.strip()
+            )
+            if not m:
                 st.error(erro)
+            else:
+                with st.form(key="form_atualizar_motoboy", clear_on_submit=False):
+                    st.markdown(f"**ID:** {m.id}")
+                    novo_nome = st.text_input("Nome Completo*", value=m.nome, max_chars=100)
+                    novo_telefone = st.text_input("Telefone", value=m.telefone or "", max_chars=15)
+                    novo_status = st.selectbox(
+                        "Status Operacional*",
+                        ["Online", "Offline"],
+                        index=0 if m.status_operacional.lower() == "online" else 1
+                    )
+                    novas_zonas = st.text_input(
+                        "Zonas de Atuação (separe por vírgula)",
+                        value=", ".join(m.zonas_atuacao) if m.zonas_atuacao else "",
+                        max_chars=200
+                    )
+                    novos_horarios = st.text_input(
+                        "Horários Disponíveis (separe por vírgula)",
+                        value=", ".join(m.horarios_disponiveis) if m.horarios_disponiveis else "",
+                        max_chars=200
+                    )
+                    btn_atualizar = st.form_submit_button("Salvar Atualização")
 
-    elif escolha == "Deletar":
-        st.subheader("Deletar Entregador")
-        cpf = st.text_input("CPF")
-        telefone = st.text_input("Telefone")
-        nome_busca = st.text_input("Nome Completo")
-        if st.button("Buscar"):
-            m, erro = buscar_por_campo_unico(motoboy_dao, cpf=cpf, telefone=telefone, nome=nome_busca)
-            if m:
+                if btn_atualizar:
+                    erros = []
+                    if not novo_nome.strip():
+                        erros.append("O campo Nome é obrigatório.")
+                    if erros:
+                        for e in erros:
+                            st.error(e)
+                    else:
+                        m.nome = novo_nome.strip()
+                        m.telefone = novo_telefone.strip()
+                        m.status_operacional = novo_status
+                        m.zonas_atuacao = [z.strip() for z in novas_zonas.split(",")] if novas_zonas else []
+                        m.horarios_disponiveis = [h.strip() for h in novos_horarios.split(",")] if novos_horarios else []
+                        m.data_atualizacao = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        ok, msg = motoboy_dao.atualizar(m)
+                        if ok:
+                            st.success("Motoboy atualizado com sucesso!")
+                        else:
+                            st.error(f"Erro ao atualizar motoboy: {msg}")
+
+        return
+
+    # ======================
+    # 4. Deletar
+    # ======================
+    if escolha == "Deletar":
+        st.subheader("❌ Deletar Motoboy")
+        with st.form(key="form_deletar_motoboy"):
+            cpf_busca = st.text_input("CPF para busca", max_chars=18)
+            telefone_busca = st.text_input("Telefone para busca", max_chars=15)
+            nome_busca = st.text_input("Nome para busca", max_chars=100)
+            btn_buscar = st.form_submit_button("Buscar")
+
+        if btn_buscar:
+            m, erro = buscar_por_campo_unico(
+                motoboy_dao,
+                cpf=cpf_busca.strip(),
+                telefone=telefone_busca.strip(),
+                nome=nome_busca.strip()
+            )
+            if not m:
+                st.error(erro)
+            else:
+                st.warning(f"Tem certeza que deseja deletar o motoboy: {m.nome} (ID: {m.id})?")
                 if st.button("Confirmar Exclusão"):
-                    motoboy_dao.deletar(m.id)
-                    st.success("Entregador deletado com sucesso!")
-            else:
-                st.error(erro)
+                    ok, msg = motoboy_dao.deletar(m.id)
+                    if ok:
+                        st.success("Motoboy deletado com sucesso!")
+                    else:
+                        st.error(f"Erro ao deletar motoboy: {msg}")
+
+        return
+
+    st.error("Ação inválida.")
